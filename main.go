@@ -2,10 +2,12 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "github.com/gorilla/websocket"
-    "github.com/streadway/amqp"
+	"fmt"
+	"net/http"
+	"strings"
+
+	"github.com/gorilla/websocket"
+	"github.com/streadway/amqp"
 )
 
 var upgrader = websocket.Upgrader{
@@ -24,7 +26,11 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 	defer ch.Close()
 
         conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
+	user := conn.RemoteAddr().String()
+	usersplited := strings.Split(user,":")
+	fmt.Println(usersplited[0])
 	fmt.Printf("%s %s ",conn.RemoteAddr(),"Another Client Connected\n")
+
 	for{
             // Read message from browser
             msgType, msg, err := conn.ReadMessage()
